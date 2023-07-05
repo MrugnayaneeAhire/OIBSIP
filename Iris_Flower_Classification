@@ -1,0 +1,122 @@
+#Data Science internship 
+#Task 1 : Iris flower classification
+#Code:
+
+import pandas as pd
+import numpy as np
+import statistics as st
+
+iris = pd.read_csv('Iris.csv')
+iris
+
+iris.columns
+iris.dtypes
+iris.value_counts("Species")
+iris.value_counts("SepalLengthCm")
+iris.value_counts("PetalLengthCm")
+
+iris.describe()
+
+setosa=iris['Species']=='Iris-setosa'
+iris[setosa].describe()
+
+versicolor=iris['Species']=='Iris-versicolor'
+iris[versicolor].describe()
+
+virginica=iris['Species']=='Iris-virginica'
+iris[virginica].describe()
+
+iris['Species'].replace(['Iris-setosa', 'Iris-virginica','Iris-versicolor'],
+                        [1,2,3], inplace=True)
+iris
+
+iris.info()
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+%matplotlib inline
+
+fig,axes=plt.subplots(2,2,figsize=(16,8))
+
+axes[0,0].set_title("DIst of first column")
+axes[0,0].hist(iris['SepalLengthCm'])
+
+axes[0,1].set_title("DIst of second column")
+axes[0,1].hist(iris['SepalWidthCm'])
+
+axes[1,0].set_title("DIst of third column")
+axes[1,0].hist(iris['PetalLengthCm'])
+
+axes[1,1].set_title("DIst of fourth column")
+axes[1,1].hist(iris['PetalLengthCm'])
+
+sns.boxplot(x='SepalLengthCm', y='Species', data=iris)
+sns.boxplot(x='SepalWidthCm',y='Species',data=iris)
+sns.boxplot(x='PetalLengthCm',y='Species',data=iris)
+sns.boxplot(x='PetalWidthCm',y='Species',data=iris)
+sns.distplot(iris['PetalLengthCm'],bins=10,kde=False)
+iris.head()
+from sklearn.datasets import load_iris
+data = load_iris()
+
+df = pd.DataFrame(data.data, columns = [x.replace(' (cm)',"").replace(' ', '_') for x in data.feature_names] )
+print(type(df))
+
+data.feature_names
+
+data.target
+
+df['target'] = data.target
+
+df.head()
+X = df.iloc[:, :-1]
+X.head()
+
+from sklearn.preprocessing import normalize
+X_norm = normalize(X)
+X_norm[:5]
+
+X_norm_df = pd.DataFrame(X_norm, columns = X.columns)
+X_norm_df
+
+from sklearn.decomposition import PCA
+pca =PCA()
+
+df_pca = pca.fit(X_norm)
+print(np.round(df_pca.explained_variance_ratio_,4)*100)
+
+np.cumsum(np.round(df_pca.explained_variance_ratio_,4)*100)
+
+df_pca = pca.fit_transform(X_norm)
+df_new = pd.DataFrame(df_pca[:, :2], columns=['PC1','PC2'])
+df_new.head()
+df_new['target'] = data.target
+df_new.head()
+import seaborn as sns
+import matplotlib.pyplot as plt
+sns.scatterplot(x='PC1', y='PC2', hue = 'target', data=df_new)
+plt.show()
+df.head()
+
+from sklearn.tree import DecisionTreeClassifier
+X = df.iloc[:, :-1]
+y = df.iloc[:,-1]
+X.head()
+
+dt = DecisionTreeClassifier()
+dt.fit(X,y)
+
+y_pred = dt.predict(X)
+from sklearn.metrics import classification_report
+print(classification_report(y_pred, y))
+
+X = df_new.iloc[:, :-1]
+y = df_new.iloc[:, :-1]
+X.head()
+
+y.head()
+
+
+
+  
+
